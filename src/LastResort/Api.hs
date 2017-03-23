@@ -32,7 +32,7 @@ defaultMainApi = undefined -- do
 
 type Config = ()
 
-type LastResortM = Maybe
+type LastResortM = Handler
 
 
 type Api = "v0" :> (ApiSearch :<|> ApiStatus)
@@ -41,14 +41,14 @@ type ApiSearch = Post '[JSON] Int
 
 type ApiStatus = Get '[JSON] Int
 
-serverRoot :: {- (MonadLogger m) => -} ServerT Api m
+serverRoot :: {- (MonadLogger m) => -} ServerT Api Handler
 serverRoot = search :<|> status
 
-search :: m Int
-search = undefined
+search :: Handler Int
+search = pure 1
 
-status :: m Int
-status = undefined
+status :: Handler Int
+status = pure 1
 
 -- | Given a 'Config', this returns a Wai 'Application'.
 app :: Config -> Application
@@ -62,7 +62,7 @@ apiServer config = enter natTrans serverRoot
     natTrans = NT trans
 
     trans :: forall a. LastResortM a -> Handler a
-    trans = undefined
+    trans = id
 
 
 -- {-# LANGUAGE OverloadedStrings #-}
