@@ -23,6 +23,7 @@ library
                      , classy-prelude
                      , monad-control
                      , monad-logger
+                     , natural-transformation
                      , mtl
                      , servant
                      , servant-server

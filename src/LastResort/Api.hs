@@ -2,10 +2,15 @@ module LastResort.Api
   ( defaultMainApi
   ) where
 
-import LastResort.Prelude
+import LastResort.Prelude hiding (Handler)
 
-import Network.Wai (Middleware)
+import Control.Natural ((:~>)(NT))
+import Network.Wai (Application, Middleware, Request)
 import Network.Wai.Handler.Warp (run)
+import Servant
+       ((:>), (:<|>)(..), Context(..), Get, Handler, JSON, Post,
+        ServantErr, Server, ServerT, enter, serve)
+import Servant.Server.Experimental.Auth (AuthHandler)
 
 -- import LastResort.Config
 --        (Config(..), createConfigFromEnvVars, getRequestLoggerMiddleware)
@@ -25,6 +30,39 @@ defaultMainApi = undefined -- do
   -- putStrLn $ "last-resort running on port " <> tshow port <> "..."
   -- run port . requestLoggerMiddleware $ app cfg
 
+type Config = ()
+
+type LastResortM = Maybe
+
+
+type Api = "v0" :> (ApiSearch :<|> ApiStatus)
+
+type ApiSearch = Post '[JSON] Int
+
+type ApiStatus = Get '[JSON] Int
+
+serverRoot :: {- (MonadLogger m) => -} ServerT Api m
+serverRoot = search :<|> status
+
+search :: m Int
+search = undefined
+
+status :: m Int
+status = undefined
+
+-- | Given a 'Config', this returns a Wai 'Application'.
+app :: Config -> Application
+app config = serve (Proxy :: Proxy Api) $ apiServer config
+
+-- | Given a 'Config', this returns a servant 'Server' for 'Api'
+apiServer :: Config -> Server Api
+apiServer config = enter natTrans serverRoot
+  where
+    natTrans :: LastResortM :~> Handler
+    natTrans = NT trans
+
+    trans :: forall a. LastResortM a -> Handler a
+    trans = undefined
 
 
 -- {-# LANGUAGE OverloadedStrings #-}
