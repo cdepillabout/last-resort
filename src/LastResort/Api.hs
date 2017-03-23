@@ -1,3 +1,31 @@
+module LastResort.Api
+  ( defaultMainApi
+  ) where
+
+import LastResort.Prelude
+
+import Network.Wai (Middleware)
+import Network.Wai.Handler.Warp (run)
+
+-- import LastResort.Config
+--        (Config(..), createConfigFromEnvVars, getRequestLoggerMiddleware)
+-- import LastResort.Db (doMigrations)
+-- import LastResort.Handler (app)
+
+-- setup :: IO (Config, Middleware)
+-- setup = do
+--   cfg <- createConfigFromEnvVars
+--   let requestLoggerMiddleware = getRequestLoggerMiddleware $ configEnv cfg
+--   return (cfg, requestLoggerMiddleware)
+
+defaultMainApi :: IO ()
+defaultMainApi = undefined -- do
+  -- (cfg, requestLoggerMiddleware) <- setup
+  -- let port = configPort cfg
+  -- putStrLn $ "last-resort running on port " <> tshow port <> "..."
+  -- run port . requestLoggerMiddleware $ app cfg
+
+
 
 -- {-# LANGUAGE OverloadedStrings #-}
 
