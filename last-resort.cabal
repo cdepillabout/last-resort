@@ -1,0 +1,92 @@
+name:                last-resort
+version:             0.1.0.0
+synopsis:            Search Twitter for Japanese example sentences for learning
+description:         Please see <https://github.com/cdepillabout/last-resort#readme README.md>.
+homepage:            https://github.com/cdepillabout/last-resort
+license:             BSD3
+license-file:        LICENSE
+author:              Dennis Gosnell
+maintainer:          cdep.illabout@gmail.com
+copyright:           2017 Dennis Gosnell
+category:            Text
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     LastResort.Api
+  build-depends:       base >= 4.9 && < 5
+                     , classy-prelude
+                     , servant
+                     , servant-server
+                     , warp
+  default-language:    Haskell2010
+  ghc-options:         -Wall -fwarn-incomplete-uni-patterns -fwarn-incomplete-record-updates -fwarn-monomorphism-restriction
+  default-extensions:  ConstraintKinds
+                     , DataKinds
+                     , DefaultSignatures
+                     , DeriveDataTypeable
+                     , DeriveFunctor
+                     , DeriveGeneric
+                     , DuplicateRecordFields
+                     , EmptyDataDecls
+                     , FlexibleContexts
+                     , FlexibleInstances
+                     , GADTs
+                     , GeneralizedNewtypeDeriving
+                     , InstanceSigs
+                     , LambdaCase
+                     , MultiParamTypeClasses
+                     , NamedFieldPuns
+                     , NoImplicitPrelude
+                     , NoMonomorphismRestriction
+                     , OverloadedLabels
+                     , OverloadedLists
+                     , OverloadedStrings
+                     , PackageImports
+                     , PartialTypeSignatures
+                     , PatternSynonyms
+                     , PolyKinds
+                     , RankNTypes
+                     , RecordWildCards
+                     , ScopedTypeVariables
+                     , StandaloneDeriving
+                     , TupleSections
+                     , TypeFamilies
+                     , TypeOperators
+                     , ViewPatterns
+  other-extensions:    QuasiQuotes
+                     , TemplateHaskell
+
+executable last-resort-api
+  hs-source-dirs:      app/api
+  main-is:             Main.hs
+  ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N -fwarn-incomplete-uni-patterns -fwarn-incomplete-record-updates -fwarn-monomorphism-restriction
+  build-depends:       base
+                     , last-resort
+  default-language:    Haskell2010
+
+test-suite last-resort-doctest
+  type:                exitcode-stdio-1.0
+  main-is:             DocTest.hs
+  hs-source-dirs:      test
+  build-depends:       base
+                     , doctest
+                     , Glob
+  default-language:    Haskell2010
+  ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
+
+test-suite last-resort-test
+  type:                exitcode-stdio-1.0
+  main-is:             Spec.hs
+  hs-source-dirs:      test
+  build-depends:       base
+                     , tasty
+                     , tasty-hunit
+  default-language:    Haskell2010
+  ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N -fwarn-incomplete-uni-patterns -fwarn-incomplete-record-updates -fwarn-monomorphism-restriction
+
+source-repository head
+  type:     git
+  location: git@github.com:cdepillabout/last-resort.git
