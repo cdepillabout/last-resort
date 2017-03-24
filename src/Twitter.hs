@@ -1,4 +1,5 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Twitter
@@ -8,21 +9,24 @@ import Prelude
 
 import Control.Lens ((^?))
 import Control.Monad.IO.Class (MonadIO)
-import Data.Aeson (Value)
+import Data.Aeson (FromJSON(..), Value, (.:), decode, withObject)
+import Data.Aeson.Types (Parser)
 import Data.Aeson.Lens (_String, key)
 import Data.ByteString (ByteString)
+import qualified Data.ByteString.Lazy as LBS
 import Data.ByteString.Base64 (encode)
 import Data.Data (Data)
 import Data.Maybe (fromMaybe)
 import Data.Monoid ((<>))
 import Data.String (IsString)
+import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
 import Data.Typeable (Typeable)
 import Network.HTTP.Simple
-       (Request, addRequestHeader, defaultRequest, getResponseBody,
-        httpJSON, httpLBS, parseRequest, setRequestBodyLBS,
-        setRequestHeaders, setRequestHost, setRequestMethod,
-        setRequestPath, setRequestSecure)
+       (Request, Response, addRequestHeader, defaultRequest,
+        getResponseBody, httpJSON, httpLBS, parseRequest,
+        setRequestBodyLBS, setRequestHeaders, setRequestHost,
+        setRequestMethod, setRequestPath, setRequestSecure)
 import Network.HTTP.Types.URI (urlEncode)
 import System.ReadEnvVar (lookupEnv)
 
@@ -40,6 +44,19 @@ newtype ConsumerSecret = ConsumerSecret
 newtype Credentials = Credentials
   { unCredentials :: ByteString
   } deriving (Data, Eq, IsString, Ord, Read, Show, Typeable)
+
+newtype BearerToken = BearerToken
+  { unBearerToken :: ByteString
+  } deriving (Data, Eq, IsString, Ord, Read, Show, Typeable)
+
+instance FromJSON BearerToken where
+  parseJSON :: Value -> Parser BearerToken
+  parseJSON = withObject "BearerToken" $ \obj -> do
+    tokenType <- obj .: "token_type" :: Parser Text
+    token <- obj .: "access_token"
+    case tokenType of
+      "bearer" -> pure . BearerToken $ encodeUtf8 token
+      _ -> fail "BearerToken's \"token_type\" is not \"bearer\"."
 
 credentialsFromEnvVar :: MonadIO m => m (Maybe Credentials)
 credentialsFromEnvVar = do
@@ -67,6 +84,14 @@ createOAuth2TokenReq (Credentials credentials) =
   setRequestHost "api.twitter.com" . setRequestMethod "POST" $
   defaultRequest
 
+respToBearerToken :: Response LBS.ByteString -> Maybe BearerToken
+respToBearerToken resp =
+  let body = getResponseBody resp
+  in decode body
+
+bearerTokenFromCreds :: MonadIO m => Credentials -> m (Maybe BearerToken)
+bearerTokenFromCreds creds =
+ respToBearerToken <$> httpLBS (createOAuth2TokenReq creds)
 
 -- what :: IO ()
 -- what = do
