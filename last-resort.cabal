@@ -25,6 +25,7 @@ library
                      , base64-bytestring
                      , bytestring
                      , classy-prelude
+                     , exceptions
                      , http-conduit
                      , http-types
                      , lens
@@ -88,6 +89,41 @@ executable last-resort-api
   build-depends:       base
                      , last-resort
   default-language:    Haskell2010
+  default-extensions:  ConstraintKinds
+                     , DataKinds
+                     , DefaultSignatures
+                     , DeriveDataTypeable
+                     , DeriveFunctor
+                     , DeriveGeneric
+                     , DuplicateRecordFields
+                     , EmptyDataDecls
+                     , FlexibleContexts
+                     , FlexibleInstances
+                     , GADTs
+                     , GeneralizedNewtypeDeriving
+                     , InstanceSigs
+                     , LambdaCase
+                     , MultiParamTypeClasses
+                     , NamedFieldPuns
+                     , NoImplicitPrelude
+                     , NoMonomorphismRestriction
+                     , OverloadedLabels
+                     , OverloadedLists
+                     , OverloadedStrings
+                     , PackageImports
+                     , PartialTypeSignatures
+                     , PatternSynonyms
+                     , PolyKinds
+                     , RankNTypes
+                     , RecordWildCards
+                     , ScopedTypeVariables
+                     , StandaloneDeriving
+                     , TupleSections
+                     , TypeFamilies
+                     , TypeOperators
+                     , ViewPatterns
+  other-extensions:    QuasiQuotes
+                     , TemplateHaskell
 
 test-suite last-resort-doctest
   type:                exitcode-stdio-1.0

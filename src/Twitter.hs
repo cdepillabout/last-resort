@@ -1,14 +1,16 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Twitter
   where
 
-import Prelude
+import Prelude hiding (undefined)
 
 import Control.Lens ((^?))
-import Control.Monad.IO.Class (MonadIO)
+import Control.Monad.Catch (MonadCatch, handle)
+import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Aeson (FromJSON(..), Value, (.:), decode, withObject)
 import Data.Aeson.Types (Parser)
 import Data.Aeson.Lens (_String, key)
@@ -24,10 +26,11 @@ import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
 import Data.Typeable (Typeable)
 import Network.HTTP.Simple
-       (Request, Response, addRequestHeader, defaultRequest,
-        getResponseBody, httpJSON, httpLBS, parseRequest,
+       (HttpException, Request, Response, addRequestHeader,
+        defaultRequest, getResponseBody, httpJSON, httpLBS, parseRequest,
         setRequestBodyLBS, setRequestHeaders, setRequestHost,
-        setRequestMethod, setRequestPath, setRequestSecure)
+        setRequestMethod, setRequestPath, setRequestPort,
+        setRequestQueryString, setRequestSecure)
 import Network.HTTP.Types.URI (urlEncode)
 import System.ReadEnvVar (lookupEnv)
 import Web.Twitter.Types (SearchResult, Status)
@@ -83,31 +86,59 @@ createOAuth2Creds (ConsumerKey consumerKey) (ConsumerSecret consumerSecret) =
 
 createOAuth2TokenReq :: Credentials -> Request
 createOAuth2TokenReq (Credentials credentials) =
+  addRequestHeader "Authorization" ("Basic " <> credentials) .
   addRequestHeader
     "Content-Type"
     "application/x-www-form-urlencoded;charset=UTF-8" .
-  addRequestHeader "Authorization" ("Basic " <> credentials) .
   setRequestBodyLBS "grant_type=client_credentials" .
+  setRequestHost "api.twitter.com" .
+  setRequestMethod "POST" .
   setRequestPath "oauth2/token" .
-  setRequestSecure True .
-  setRequestHost "api.twitter.com" . setRequestMethod "POST" $
+  setRequestPort 443 .
+  setRequestSecure True $
   defaultRequest
 
-respToBearerToken :: Response LBS.ByteString -> Maybe BearerToken
+respToBearerToken :: Response LBS.ByteString -> Either TwitterError BearerToken
 respToBearerToken resp =
   let body = getResponseBody resp
-  in decode body
+  in case decode body of
+       Nothing -> Left ()
+       Just ret -> Right ret
 
-bearerTokenFromCreds :: MonadIO m => Credentials -> m (Maybe BearerToken)
-bearerTokenFromCreds creds =
- respToBearerToken <$> httpLBS (createOAuth2TokenReq creds)
+bearerTokenFromCreds
+  :: forall m.
+     (MonadCatch m, MonadIO m)
+  => Credentials -> m (Either TwitterError BearerToken)
+bearerTokenFromCreds creds = do
+  let req = createOAuth2TokenReq creds
+  liftIO $ print req
+  handle err $ respToBearerToken <$> httpLBS req
+  where
+    err :: HttpException -> m (Either TwitterError BearerToken)
+    err _ = pure $ Left ()
 
 type TwitterError = ()
 
 twitter
   :: (HasBearerToken r, FromJSON (TwitterReturn a), MonadIO m)
   => r -> TwitterRequest a -> m (Either TwitterError (TwitterReturn a))
-twitter hasBearerToken twitreq = undefined
+twitter hasBearerToken TwitterRequest{method, endpoint, queryParams} = do
+  let (BearerToken bearerToken) = getBearerToken hasBearerToken
+      initReq =
+        addRequestHeader "Authorization" ("Bearer " <> bearerToken) .
+        setRequestHost "api.twitter.com" .
+        setRequestMethod (methodToByteString method) .
+        setRequestPath ("1.1/" <> encodeUtf8 endpoint) .
+        setRequestPort 443 .
+        setRequestSecure True $
+        defaultRequest
+      req =
+        case method of
+          GET -> setRequestQueryString (fmap Just <$> queryParams) initReq
+  resp <- httpLBS req
+  case decode $ getResponseBody resp of
+    Nothing -> pure $ Left ()
+    Just ret -> pure $ Right ret
 
 newtype Param k v = Param
   { unParam :: (k, v)
@@ -120,6 +151,9 @@ data Method
   | GET
   | POST
   deriving (Data, Eq, Read, Show, Typeable)
+
+methodToByteString :: Method -> ByteString
+methodToByteString = B8.pack . show
 
 data TwitterRequest a = TwitterRequest
   { method :: Method
@@ -173,36 +207,4 @@ instance TwitterHasParam SearchTweets Count
 
 searchTweets :: SearchString -> TwitterRequest SearchTweets
 searchTweets searchString =
-  mkTwitterRequest GET "search/tweets/lalala" $ toTwitterParam searchString []
-
--- what :: IO ()
--- what = do
---   consumerKey <- lookupEnvEx "TWITTER_CONSUMER_KEY"
---   consumerSecret <- lookupEnvEx "TWITTER_CONSUMER_SECRET"
---   let urlEncodedConsumerKey = urlEncode False consumerKey
---       urlEncodedConsumerSecret = urlEncode False consumerSecret
---       credentials = urlEncodedConsumerKey <> ":" <> urlEncodedConsumerSecret
---       b64Credentials = encode credentials
---   -- print b64Credentials
---   initReq <- parseRequest "POST https://api.twitter.com/oauth2/token"
---   let headers =
---         [ ("Authorization", "Basic " <> b64Credentials)
---         , ("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
---         ]
---       req =
---         setRequestHeaders headers .
---         setRequestBodyLBS "grant_type=client_credentials" $
---         initReq
---   resp <- httpLBS req
---   -- pPrint resp
---   let body = getResponseBody resp
---       maybeTokenType = body ^? key "token_type" . _String
---       maybeToken = body ^? key "access_token" . _String
---   pPrint maybeTokenType
---   pPrint maybeToken
-
---   initReq2 <- parseRequest "https://api.twitter.com/1.1/statuses/user_timeline.json?count=10&screen_name=twitterapi"
---   let headers2 = [("Authorization", "Bearer " <> encodeUtf8 (fromMaybe undefined maybeToken))]
---       req2 = setRequestHeaders headers2 initReq2
---   resp2 <- httpJSON req2
---   pPrint $ (getResponseBody resp2 :: Value)
+  mkTwitterRequest GET "search/tweets.json" $ toTwitterParam searchString []
