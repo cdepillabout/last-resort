@@ -12,7 +12,8 @@ import Control.Monad.IO.Class (MonadIO)
 import Data.Aeson (FromJSON(..), Value, (.:), decode, withObject)
 import Data.Aeson.Types (Parser)
 import Data.Aeson.Lens (_String, key)
-import Data.ByteString (ByteString)
+import Data.ByteString (ByteString, pack)
+import qualified Data.ByteString.Char8 as B8
 import qualified Data.ByteString.Lazy as LBS
 import Data.ByteString.Base64 (encode)
 import Data.Data (Data)
@@ -29,6 +30,7 @@ import Network.HTTP.Simple
         setRequestMethod, setRequestPath, setRequestSecure)
 import Network.HTTP.Types.URI (urlEncode)
 import System.ReadEnvVar (lookupEnv)
+import Web.Twitter.Types (SearchResult, Status)
 
 -- import Text.Pretty.Simple
 
@@ -57,6 +59,13 @@ instance FromJSON BearerToken where
     case tokenType of
       "bearer" -> pure . BearerToken $ encodeUtf8 token
       _ -> fail "BearerToken's \"token_type\" is not \"bearer\"."
+
+class HasBearerToken r where
+  getBearerToken :: r -> BearerToken
+
+instance HasBearerToken BearerToken where
+  getBearerToken :: BearerToken -> BearerToken
+  getBearerToken = id
 
 credentialsFromEnvVar :: MonadIO m => m (Maybe Credentials)
 credentialsFromEnvVar = do
@@ -92,6 +101,79 @@ respToBearerToken resp =
 bearerTokenFromCreds :: MonadIO m => Credentials -> m (Maybe BearerToken)
 bearerTokenFromCreds creds =
  respToBearerToken <$> httpLBS (createOAuth2TokenReq creds)
+
+type TwitterError = ()
+
+twitter
+  :: (HasBearerToken r, FromJSON (TwitterReturn a), MonadIO m)
+  => r -> TwitterRequest a -> m (Either TwitterError (TwitterReturn a))
+twitter hasBearerToken twitreq = undefined
+
+newtype Param k v = Param
+  { unParam :: (k, v)
+  } deriving (Data, Eq, Read, Show, Typeable)
+
+type Params = [(ByteString, ByteString)]
+
+data Method
+  = DELETE
+  | GET
+  | POST
+  deriving (Data, Eq, Read, Show, Typeable)
+
+data TwitterRequest a = TwitterRequest
+  { method :: Method
+  , endpoint :: Text
+  , queryParams :: Params
+  } deriving (Data, Eq, Read, Show, Typeable)
+
+class ToTwitterParam param where
+  toTwitterParam :: param -> [(ByteString, ByteString)] -> [(ByteString, ByteString)]
+
+class ToTwitterParam param => TwitterHasParam request param
+
+type family TwitterReturn a :: *
+
+mkTwitterRequest :: Method -> Text -> Params -> TwitterRequest a
+mkTwitterRequest = TwitterRequest
+
+(-&-)
+  :: TwitterHasParam request param
+  => TwitterRequest request -> param -> TwitterRequest request
+twitReq -&- param =
+  twitReq {queryParams = toTwitterParam param (queryParams twitReq)}
+
+newtype SearchString = SearchString
+  { unSearchString :: Text
+  } deriving (Data, Eq, IsString, Read, Show, Typeable)
+
+newtype Count = Count
+  { unCount :: Int
+  } deriving (Data, Eq, Num, Read, Show, Typeable)
+
+instance ToTwitterParam Count where
+  toTwitterParam :: Count
+                 -> [(ByteString, ByteString)]
+                 -> [(ByteString, ByteString)]
+  toTwitterParam (Count count) =
+    (("count", B8.pack $ show count) :)
+
+instance ToTwitterParam SearchString where
+  toTwitterParam :: SearchString
+                 -> [(ByteString, ByteString)]
+                 -> [(ByteString, ByteString)]
+  toTwitterParam (SearchString query) =
+    (("q", encodeUtf8 query) :)
+
+data SearchTweets
+
+type instance TwitterReturn SearchTweets = SearchResult [Status]
+
+instance TwitterHasParam SearchTweets Count
+
+searchTweets :: SearchString -> TwitterRequest SearchTweets
+searchTweets searchString =
+  mkTwitterRequest GET "search/tweets/lalala" $ toTwitterParam searchString []
 
 -- what :: IO ()
 -- what = do

@@ -12,6 +12,7 @@ extra-deps:
     - read-env-var-1.0.0.0
     - servant-0.10
     - servant-server-0.10
+    - twitter-types-0.7.2.2
 
 # Override default flag values for local packages and extra-deps
 flags: {}

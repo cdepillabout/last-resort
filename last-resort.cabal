@@ -40,6 +40,7 @@ library
                      , time
                      , transformers
                      , transformers-base
+                     , twitter-types
                      , wai
                      , warp
   default-language:    Haskell2010
