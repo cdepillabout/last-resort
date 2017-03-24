@@ -19,14 +19,24 @@ library
                      , LastResort.Prelude
                      , LastResort.Prelude.Orphan
                      , LastResort.Prelude.Util
+                     , Twitter
   build-depends:       base >= 4.9 && < 5
+                     , aeson
+                     , base64-bytestring
+                     , bytestring
                      , classy-prelude
+                     , http-conduit
+                     , http-types
+                     , lens
+                     , lens-aeson
                      , monad-control
                      , monad-logger
-                     , natural-transformation
                      , mtl
+                     , natural-transformation
+                     , read-env-var
                      , servant
                      , servant-server
+                     , text
                      , time
                      , transformers
                      , transformers-base
