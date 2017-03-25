@@ -16,6 +16,7 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     LastResort.Api
+                     , LastResort.Config
                      , LastResort.Prelude
                      , LastResort.Prelude.Orphan
                      , LastResort.Prelude.Util

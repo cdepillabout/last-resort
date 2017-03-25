@@ -70,8 +70,14 @@ instance HasBearerToken BearerToken where
   getBearerToken :: BearerToken -> BearerToken
   getBearerToken = id
 
-credentialsFromEnvVar :: MonadIO m => m (Maybe Credentials)
-credentialsFromEnvVar = do
+credentialsFromEnv :: MonadIO m => m (Maybe Credentials)
+credentialsFromEnv = do
+  consumerKey <- lookupEnv "TWITTER_CONSUMER_KEY"
+  consumerSecret <- lookupEnv "TWITTER_CONSUMER_SECRET"
+  pure $ createOAuth2Creds <$> consumerKey <*> consumerSecret
+
+credentialsFromEnvEx :: MonadIO m => m (Maybe Credentials)
+credentialsFromEnvEx = do
   consumerKey <- lookupEnv "TWITTER_CONSUMER_KEY"
   consumerSecret <- lookupEnv "TWITTER_CONSUMER_SECRET"
   pure $ createOAuth2Creds <$> consumerKey <*> consumerSecret

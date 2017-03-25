@@ -12,28 +12,22 @@ import Servant
         ServantErr, Server, ServerT, enter, serve)
 import Servant.Server.Experimental.Auth (AuthHandler)
 
--- import LastResort.Config
---        (Config(..), createConfigFromEnvVars, getRequestLoggerMiddleware)
--- import LastResort.Db (doMigrations)
--- import LastResort.Handler (app)
+import LastResult.Config (Config(..))
 
--- setup :: IO (Config, Middleware)
--- setup = do
---   cfg <- createConfigFromEnvVars
---   let requestLoggerMiddleware = getRequestLoggerMiddleware $ configEnv cfg
---   return (cfg, requestLoggerMiddleware)
+setup :: IO (Config, Middleware)
+setup = do
+  config <- configFromEnv
+  let loggerMiddleware = requestLoggerMiddleware config
+  return (config, loggerMiddleware)
 
 defaultMainApi :: IO ()
-defaultMainApi = undefined -- do
-  -- (cfg, requestLoggerMiddleware) <- setup
-  -- let port = configPort cfg
-  -- putStrLn $ "last-resort running on port " <> tshow port <> "..."
-  -- run port . requestLoggerMiddleware $ app cfg
-
-type Config = ()
+defaultMainApi = do
+  (config, loggerMiddleware) <- setup
+  let port = configPort config
+  putStrLn $ "last-resort running on port " <> tshow (configPort config)
+  run port . loggerMiddleware $ app config
 
 type LastResortM = Handler
-
 
 type Api = "v0" :> (ApiSearch :<|> ApiStatus)
 
