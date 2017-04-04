@@ -4,12 +4,39 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Twitter
-  where
+  ( ConsumerKey(..)
+  , ConsumerSecret(..)
+  , Credentials(..)
+  , BearerToken
+  , HasBearerToken(..)
+  , CredentialsException(..)
+  , credentialsFromEnv
+  , credentialsFromEnvEx
+  , createOAuth2Creds
+  , bearerTokenFromCreds
+  , TwitterError
+  , twitter
+  , Param(..)
+  , Params
+  , Method(DELETE, GET, POST, PUT)
+  , TwitterRequest(..)
+  , ToTwitterParam(..)
+  , TwitterReturn
+  , mkTwitterRequest
+  , (-&-)
+  , SearchString(..)
+  , Count(..)
+  , SearchTweets
+  , searchTweets
+  , module Web.Twitter.Types
+  ) where
 
 import Prelude hiding (undefined)
 
+import Control.FromSum (fromMaybeM)
+import Control.Exception (Exception(displayException))
 import Control.Lens ((^?))
-import Control.Monad.Catch (MonadCatch, handle)
+import Control.Monad.Catch (MonadCatch, MonadThrow(throwM), handle)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Aeson (FromJSON(..), Value, (.:), decode, withObject)
 import Data.Aeson.Types (Parser)
@@ -70,17 +97,26 @@ instance HasBearerToken BearerToken where
   getBearerToken :: BearerToken -> BearerToken
   getBearerToken = id
 
+data CredentialsException = CredentialsNotEnvVar
+  deriving (Data, Eq, Read, Show, Typeable)
+
+instance Exception CredentialsException where
+  displayException :: CredentialsException -> String
+  displayException CredentialsNotEnvVar =
+    "The expected twitter credentials could not be read from the\n" <>
+    "environment variables \"TWITTER_CONSUMER_KEY\" and\n" <>
+    "\"TWITTER_CONSUMER_SECRET\".  Do you need to set these\n" <>
+    "environment variables?"
+
 credentialsFromEnv :: MonadIO m => m (Maybe Credentials)
 credentialsFromEnv = do
   consumerKey <- lookupEnv "TWITTER_CONSUMER_KEY"
   consumerSecret <- lookupEnv "TWITTER_CONSUMER_SECRET"
   pure $ createOAuth2Creds <$> consumerKey <*> consumerSecret
 
-credentialsFromEnvEx :: MonadIO m => m (Maybe Credentials)
-credentialsFromEnvEx = do
-  consumerKey <- lookupEnv "TWITTER_CONSUMER_KEY"
-  consumerSecret <- lookupEnv "TWITTER_CONSUMER_SECRET"
-  pure $ createOAuth2Creds <$> consumerKey <*> consumerSecret
+credentialsFromEnvEx :: (MonadThrow m, MonadIO m) => m Credentials
+credentialsFromEnvEx =
+  fromMaybeM (throwM CredentialsNotEnvVar) =<< credentialsFromEnv
 
 createOAuth2Creds :: ConsumerKey -> ConsumerSecret -> Credentials
 createOAuth2Creds (ConsumerKey consumerKey) (ConsumerSecret consumerSecret) =
@@ -117,7 +153,6 @@ bearerTokenFromCreds
   => Credentials -> m (Either TwitterError BearerToken)
 bearerTokenFromCreds creds = do
   let req = createOAuth2TokenReq creds
-  liftIO $ print req
   handle err $ respToBearerToken <$> httpLBS req
   where
     err :: HttpException -> m (Either TwitterError BearerToken)
@@ -156,6 +191,7 @@ data Method
   = DELETE
   | GET
   | POST
+  | PUT
   deriving (Data, Eq, Read, Show, Typeable)
 
 methodToByteString :: Method -> ByteString

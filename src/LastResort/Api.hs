@@ -7,12 +7,27 @@ import LastResort.Prelude hiding (Handler)
 import Control.Natural ((:~>)(NT))
 import Network.Wai (Application, Middleware, Request)
 import Network.Wai.Handler.Warp (run)
+import Network.Wai.Middleware.RequestLogger
+       (logStdout, logStdoutDev)
 import Servant
        ((:>), (:<|>)(..), Context(..), Get, Handler, JSON, Post,
         ServantErr, Server, ServerT, enter, serve)
 import Servant.Server.Experimental.Auth (AuthHandler)
+import Twitter
+       (Count(Count), Status, SearchResult, (-&-), twitter, searchTweets)
 
-import LastResult.Config (Config(..))
+import LastResort.Config
+       (Config(..), Environment(..), HasEnvironment(getEnvironment),
+        configFromEnv)
+
+requestLoggerMiddleware :: (HasEnvironment r, MonadReader r m) => m Middleware
+requestLoggerMiddleware = do
+  r <- ask
+  pure $
+    case getEnvironment r of
+      Testing -> id
+      Development -> logStdoutDev
+      Production -> logStdout
 
 setup :: IO (Config, Middleware)
 setup = do
@@ -31,15 +46,19 @@ type LastResortM = Handler
 
 type Api = "v0" :> (ApiSearch :<|> ApiStatus)
 
-type ApiSearch = Post '[JSON] Int
+type ApiSearch = "search" :> Post '[JSON] (SearchResult [Status])
 
-type ApiStatus = Get '[JSON] Int
+type ApiStatus = "status" :> Get '[JSON] Int
 
-serverRoot :: {- (MonadLogger m) => -} ServerT Api Handler
-serverRoot = search :<|> status
+serverRoot :: {- (MonadLogger m) => -} Config -> ServerT Api Handler
+serverRoot config = search config :<|> status
 
-search :: Handler Int
-search = pure 1
+search :: Config -> Handler (SearchResult [Status])
+search config = do
+  eitherStatuses <- twitter config $ searchTweets "hello" -&- Count 10
+  case eitherStatuses of
+    Left twitterErr -> undefined
+    Right statuses -> pure statuses
 
 status :: Handler Int
 status = pure 1
@@ -50,7 +69,7 @@ app config = serve (Proxy :: Proxy Api) $ apiServer config
 
 -- | Given a 'Config', this returns a servant 'Server' for 'Api'
 apiServer :: Config -> Server Api
-apiServer config = enter natTrans serverRoot
+apiServer config = enter natTrans (serverRoot config)
   where
     natTrans :: LastResortM :~> Handler
     natTrans = NT trans

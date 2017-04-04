@@ -24,6 +24,9 @@ haddock: build-haddock
 build-haddock:
 	stack build --haddock
 
+run: build
+	stack exec -- last-resort-api
+
 # Watch for changes.
 watch:
 	stack build --file-watch --fast .
