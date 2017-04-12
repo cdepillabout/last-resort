@@ -1,14 +1,17 @@
 
 module LastResort.Logger where
 
+import LastResort.Prelude
+
+import Network.Wai (Middleware)
 import Network.Wai.Middleware.RequestLogger
        (logStdoutDev, logStdout)
 
-import LastResort.Config (HasEnvironment(getEnvironment))
+import LastResort.Environment (Environment(..), HasEnvironment(getEnvironment))
 
 requestLoggerMiddleware :: HasEnvironment r => r -> Middleware
 requestLoggerMiddleware r =
   case getEnvironment r of
-    Test -> id
+    Testing -> id
     Development -> logStdoutDev
     Production -> logStdout

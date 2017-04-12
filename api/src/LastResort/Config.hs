@@ -10,18 +10,7 @@ import Web.Twitter.AppOnly.Auth
        (BearerToken, Credentials, HasBearerToken(..), TwitterError,
         bearerTokenFromCreds, credentialsFromEnv)
 
-data Environment
-  = Development
-  | Testing
-  | Production
-  deriving (Data, Eq, Ord, Read, Show, Typeable)
-
-class HasEnvironment r where
-  getEnvironment :: r -> Environment
-
-instance HasEnvironment Environment where
-  getEnvironment :: Environment -> Environment
-  getEnvironment = id
+import LastResort.Environment (Environment(..), HasEnvironment(..))
 
 data Config = Config
   { configBearer :: BearerToken

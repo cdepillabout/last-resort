@@ -16,18 +16,8 @@ import Servant.Server.Experimental.Auth (AuthHandler)
 import Web.Twitter.AppOnly
        (Count(Count), Status, SearchResult, (-&-), twitter, searchTweets)
 
-import LastResort.Config
-       (Config(..), Environment(..), HasEnvironment(getEnvironment),
-        configFromEnv)
-
-requestLoggerMiddleware :: (HasEnvironment r, MonadReader r m) => m Middleware
-requestLoggerMiddleware = do
-  r <- ask
-  pure $
-    case getEnvironment r of
-      Testing -> id
-      Development -> logStdoutDev
-      Production -> logStdout
+import LastResort.Config (Config(..), configFromEnv)
+import LastResort.Logger (requestLoggerMiddleware)
 
 setup :: IO (Config, Middleware)
 setup = do

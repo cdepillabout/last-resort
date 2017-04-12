@@ -17,9 +17,11 @@ library
   hs-source-dirs:      src
   exposed-modules:     LastResort.Api
                      , LastResort.Config
+                     , LastResort.Environment
                      , LastResort.Prelude
                      , LastResort.Prelude.Orphan
                      , LastResort.Prelude.Util
+                     , LastResort.Logger
   build-depends:       base >= 4.9 && < 5
                      , aeson
                      , base64-bytestring
