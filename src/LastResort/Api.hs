@@ -13,7 +13,7 @@ import Servant
        ((:>), (:<|>)(..), Context(..), Get, Handler, JSON, Post,
         ServantErr, Server, ServerT, enter, serve)
 import Servant.Server.Experimental.Auth (AuthHandler)
-import Twitter
+import Web.Twitter.AppOnly
        (Count(Count), Status, SearchResult, (-&-), twitter, searchTweets)
 
 import LastResort.Config
@@ -55,7 +55,7 @@ serverRoot config = search config :<|> status
 
 search :: Config -> Handler (SearchResult [Status])
 search config = do
-  eitherStatuses <- twitter config $ searchTweets "hello" -&- Count 10
+  eitherStatuses <- twitter config $ searchTweets "ヤギ" -&- Count 10
   case eitherStatuses of
     Left twitterErr -> undefined
     Right statuses -> pure statuses

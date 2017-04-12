@@ -20,7 +20,6 @@ library
                      , LastResort.Prelude
                      , LastResort.Prelude.Orphan
                      , LastResort.Prelude.Util
-                     , Twitter
   build-depends:       base >= 4.9 && < 5
                      , aeson
                      , base64-bytestring
@@ -43,6 +42,7 @@ library
                      , time
                      , transformers
                      , transformers-base
+                     , twitter-app-only
                      , twitter-types
                      , wai
                      , wai-extra

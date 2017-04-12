@@ -6,7 +6,7 @@ import LastResort.Prelude
 import Control.FromSum (fromEitherOrM, fromMaybeOrM)
 import Network.Wai.Handler.Warp (Port)
 import System.ReadEnvVar (readEnvDef)
-import Twitter
+import Web.Twitter.AppOnly.Auth
        (BearerToken, Credentials, HasBearerToken(..), TwitterError,
         bearerTokenFromCreds, credentialsFromEnv)
 
