@@ -4,13 +4,13 @@ synopsis:            Search Twitter for Japanese example sentences for learning
 description:         Please see <https://github.com/cdepillabout/last-resort#readme README.md>.
 homepage:            https://github.com/cdepillabout/last-resort
 license:             BSD3
-license-file:        LICENSE
+license-file:        ../LICENSE
 author:              Dennis Gosnell
 maintainer:          cdep.illabout@gmail.com
 copyright:           2017 Dennis Gosnell
 category:            Text
 build-type:          Simple
-extra-source-files:  README.md
+extra-source-files:  ../README.md
 cabal-version:       >=1.10
 
 library
