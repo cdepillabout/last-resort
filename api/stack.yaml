@@ -10,9 +10,12 @@ packages:
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps:
+    # Should be available in lts-9.
     - read-env-var-1.0.0.0
+    # Should be available in lts-9.
     - servant-0.10
     - servant-server-0.10
+    # Should be available in lts-9.
     - twitter-types-0.7.2.2
 
 # Override default flag values for local packages and extra-deps
