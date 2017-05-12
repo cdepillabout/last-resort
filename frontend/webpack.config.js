@@ -80,40 +80,4 @@ const config = {
   }
 }
 
-// If this file is directly run with node, start the development server
-// instead of exporting the webpack config.
-// if (require.main === module) {
-//   const compiler = webpack(config)
-//   const serverCompiler = webpack(require('./webpack.config.server.js'))
-
-//   console.log('Compiling...')
-
-//   serverCompiler.run((err) => {
-//     if (err) return console.error(err)
-
-//     const server = require('./dist/server.js')
-
-//     server([
-//       require('connect-history-api-fallback')(),
-//       require("webpack-dev-middleware")(compiler, {
-//         publicPath: config.output.publicPath,
-//         stats: {
-//           assets: false,
-//           cached: false,
-//           cachedAssets: false,
-//           children: false,
-//           chunks: false,
-//           chunkModules: false,
-//           chunkOrigins: false,
-//           hash: false,
-//           performance: false,
-//           timing: false,
-//           version: false
-//         }
-//       }),
-//       require("webpack-hot-middleware")(compiler)
-//     ])()
-//   })
-// } else {
-  module.exports = config
-// }
+module.exports = config
