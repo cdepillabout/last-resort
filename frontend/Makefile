@@ -19,15 +19,9 @@ test:
 watch:
 	if [ -z "$${WEBPACK_DEV_SERVER_HOST}" ]; then \
 		webpack-dev-server \
-			--watch \
-			--progress \
-			--hot \
-			--content-base static/ ; \
+			--progress; \
 	else \
 		webpack-dev-server \
-			--watch \
 			--progress \
-			--hot \
-			--host "$${WEBPACK_DEV_SERVER_HOST}" \
-			--content-base static/ ; \
+			--host "$${WEBPACK_DEV_SERVER_HOST}"; \
 	fi 

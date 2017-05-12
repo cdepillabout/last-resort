@@ -1,18 +1,13 @@
 module Client where
 
-import App.Events (AppEffects, Event(..), foldp)
-import App.Routes (match)
-import App.State (State, init)
-import App.View.Layout (view)
-import Control.Applicative (pure)
-import Control.Bind ((=<<), discard, bind)
+import Prelude
+
 import Control.Monad.Eff (Eff)
 import Control.Monad.Except (runExcept)
 import DOM (DOM)
 import DOM.HTML (window)
 import DOM.HTML.Types (HISTORY)
 import Data.Either (either)
-import Data.Function (id, ($))
 import Data.Foreign (Foreign)
 import Data.Foreign.Generic (defaultOptions, genericDecode)
 import Pux (CoreEffects, App, start)
@@ -20,6 +15,12 @@ import Pux.DOM.Events (DOMEvent)
 import Pux.DOM.History (sampleURL)
 import Pux.Renderer.React (renderToDOM)
 import Signal ((~>))
+
+import App.Events (AppEffects, Event(..), foldp)
+import App.Routes (match)
+import App.State (State, init)
+import App.View.Layout (view)
+
 
 type WebApp = App (DOMEvent -> Event) Event State
 
@@ -38,7 +39,8 @@ main url state = do
     { initialState: state
     , view
     , foldp
-    , inputs: [routeSignal] }
+    , inputs: [routeSignal]
+    }
 
   -- | Render to the DOM
   renderToDOM "#app" app.markup app.input
@@ -48,4 +50,9 @@ main url state = do
 
 -- | Used to serialize State from JSON in support/client.entry.js
 readState :: Foreign -> State
-readState json = either (\_ -> init "/") id $ runExcept (genericDecode (defaultOptions { unwrapSingleConstructors = true }) json)
+readState json =
+  either (\_ -> init "/") id $
+    runExcept
+      (genericDecode
+        (defaultOptions { unwrapSingleConstructors = true })
+        json)

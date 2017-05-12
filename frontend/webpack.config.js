@@ -77,6 +77,11 @@ const config = {
     cached: false,
     modules: false,
     chunkModules: false
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'static'),
+    hot: true,
+    watchContentBase: true
   }
 }
 
