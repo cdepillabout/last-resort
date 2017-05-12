@@ -21,11 +21,13 @@ watch:
 		webpack-dev-server \
 			--watch \
 			--progress \
+			--hot \
 			--content-base static/ ; \
 	else \
 		webpack-dev-server \
 			--watch \
 			--progress \
+			--hot \
 			--host "$${WEBPACK_DEV_SERVER_HOST}" \
 			--content-base static/ ; \
 	fi 
