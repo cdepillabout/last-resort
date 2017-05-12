@@ -13,5 +13,7 @@ view :: State -> HTML Event
 view s =
   div do
     h1 $ text "Pux"
+    h1 $ text "Yo New thing"
+    h1 $ text "Yo New thing 2"
     a ! className "guide" ! href "https://www.purescript-pux.org/" $ text "Guide"
     a ! className "github" ! href "https://github.com/alexmingoia/purescript-pux/" $ text "GitHub"

@@ -28,9 +28,9 @@ if (isProd) {
 const config = {
   entry: entries,
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'static', 'js'),
     filename: 'bundle.js',
-    publicPath: '/dist/'
+    publicPath: '/js/'
   },
   module: {
     loaders: [
@@ -40,7 +40,7 @@ const config = {
         exclude: /node_modules/,
         query: isProd ? {
           bundle: true,
-          bundleOutput: 'static/dist/bundle.js'
+          bundleOutput: path.join('output', 'bundle.js')
         } : {
           psc: 'psa'
         }
