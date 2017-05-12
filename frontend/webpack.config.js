@@ -18,11 +18,6 @@ if (isProd) {
     })
   )
 } else {
-  // entries.unshift('webpack-hot-middleware/client?reload=true');
-  // plugins.push(
-    // new webpack.HotModuleReplacementPlugin(),
-    // new webpack.NoEmitOnErrorsPlugin()
-  // )
 }
 
 const config = {
@@ -33,11 +28,6 @@ const config = {
     publicPath: '/js/dist'
   },
   plugins: plugins,
-  // resolveLoader: {
-  //   modules: [
-  //     path.join(__dirname, 'node_modules')
-  //   ]
-  // },
   resolve: {
     alias: {
       'react': 'preact-compat',
@@ -45,9 +35,9 @@ const config = {
     }
   },
   devServer: {
-    contentBase: path.join(__dirname, 'static')
+    contentBase: path.join(__dirname, 'static'),
     // hot: true,
-    // watchContentBase: true
+    watchContentBase: true
   }
 }
 
