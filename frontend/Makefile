@@ -1,14 +1,23 @@
-.PHONY: build build-prod clean install test watch
+.PHONY: build build-app build-app-prod build-prod build-ps clean install test watch watch-ps watch-app
 all: build
 
-build: 
-	npm run build
+build: build-ps build-app
+	pulp build
 
-build-prod:
-	NODE_ENV=production npm run build
+build-app:
+	webpack --progress --profile --colors
+
+build-app-prod:
+	NODE_ENV=production webpack --progress --profile --colors
+
+build-ps:
+	pulp build
+
+build-prod: build-ps build-app
 
 clean:
-	npm run clean
+	rm -rf ./static/js/dist/
+	rm -rf ./output/
 
 install:
 	npm install
@@ -16,7 +25,10 @@ install:
 test:
 	npm test
 
-watch:
+watch: build-ps
+	$(MAKE) watch-ps & $(MAKE) watch-app
+
+watch-app:
 	if [ -z "$${WEBPACK_DEV_SERVER_HOST}" ]; then \
 		webpack-dev-server \
 			--progress; \
@@ -25,3 +37,6 @@ watch:
 			--progress \
 			--host "$${WEBPACK_DEV_SERVER_HOST}"; \
 	fi 
+
+watch-ps:
+	pulp --watch build

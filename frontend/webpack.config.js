@@ -29,46 +29,26 @@ const config = {
   entry: entries,
   output: {
     path: path.join(__dirname, 'static', 'js', 'dist'),
-    filename: 'bundle.js'
-    // publicPath: '/js/'
-  },
-  module: {
-    loaders: [
-      {
-        test: /\.purs$/,
-        loader: 'purs-loader',
-        exclude: /node_modules/,
-        query: isProd ? {
-          bundle: true,
-          bundleOutput: path.join('output', 'bundle.js')
-        } : {
-          psc: 'psa'
-        }
-      }
-    ],
+    filename: 'bundle.js',
+    publicPath: '/js/dist'
   },
   plugins: plugins,
-  resolveLoader: {
-    modules: [
-      path.join(__dirname, 'node_modules')
-    ]
-  },
+  // resolveLoader: {
+  //   modules: [
+  //     path.join(__dirname, 'node_modules')
+  //   ]
+  // },
   resolve: {
     alias: {
       'react': 'preact-compat',
       'react-dom': 'preact-compat'
-    },
-    modules: [
-      'node_modules',
-      'bower_components'
-    ],
-    extensions: ['.js', '.purs']
-  } //,
-  // devServer: {
-    // contentBase: path.join(__dirname, 'static')
+    }
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'static')
     // hot: true,
     // watchContentBase: true
-  // }
+  }
 }
 
 module.exports = config

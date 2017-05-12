@@ -4,8 +4,6 @@
   "description": "",
   "main": "support/index.js",
   "scripts": {
-    "build": "npm run clean && webpack --progress --profile --colors",
-    "clean": "rimraf static/js/dist/ && rimraf output/",
     "postinstall": "bower cache clean && bower install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +15,7 @@
   },
   "devDependencies": {
     "bower": "^1.8.0",
+    "pulp": "^11.0.0",
     "purescript": "^0.11.4",
     "purescript-psa": "^0.5.1",
     "purs-loader": "^3.0.0",

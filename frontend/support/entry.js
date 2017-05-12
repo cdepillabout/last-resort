@@ -1,4 +1,4 @@
-const ClientEntry = require('../src/Client.purs');
+const ClientEntry = require('../output/Client');
 
 const initialState = ClientEntry.readState(window.__puxInitialState);
 

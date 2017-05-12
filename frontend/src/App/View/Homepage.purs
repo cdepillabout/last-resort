@@ -19,5 +19,8 @@ view s =
     h1 $ text "Yo New thing 4"
     h1 $ text "Yo New thing 5"
     h1 $ text "Yo New thing 6"
+    h1 $ text "Yo New thing 7"
+    h1 $ text "Yo New thing 8"
+    h1 $ text "nothing"
     a ! className "guide" ! href "https://www.purescript-pux.org/" $ text "Guide"
     a ! className "github" ! href "https://github.com/alexmingoia/purescript-pux/" $ text "GitHub"
