@@ -2,19 +2,21 @@
   "name": "last-resort-frontend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "dependencies": {
-    "bower": "^1.8.0",
-    "pulp": "^10.0.4",
-    "purescript": "^0.10.7"
-  },
-  "devDependencies": {},
+  "main": "support/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run clean && webpack --progress --profile --colors",
+    "clean": "rimraf static/dist && rimraf dist",
+    "postinstall": "bower cache clean && bower install",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npm run clean && node ./webpack.config.client.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "BSD-3-Clause",
+  "dependencies": {},
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "pulp": "^10.0.4",
+    "purescript": "^0.10.7",
+    "rimraf": "^2.6.1"
+  }
 }
