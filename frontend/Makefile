@@ -1,8 +1,11 @@
-.PHONY: build clean install test watch
+.PHONY: build build-prod clean install test watch
 all: build
 
 build: 
 	npm run build
+
+build-prod:
+	NODE_ENV=production npm run build
 
 clean:
 	npm run clean
