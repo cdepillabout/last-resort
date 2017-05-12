@@ -19,10 +19,10 @@ if (isProd) {
   )
 } else {
   // entries.unshift('webpack-hot-middleware/client?reload=true');
-  plugins.push(
-    new webpack.HotModuleReplacementPlugin()
+  // plugins.push(
+    // new webpack.HotModuleReplacementPlugin(),
     // new webpack.NoEmitOnErrorsPlugin()
-  )
+  // )
 }
 
 const config = {
@@ -63,20 +63,6 @@ const config = {
       'bower_components'
     ],
     extensions: ['.js', '.purs']
-  },
-  performance: { hints: "warning" },
-  stats: {
-    hash: false,
-    timings: false,
-    version: false,
-    assets: false,
-    errors: false,
-    colors: false,
-    chunks: false,
-    children: false,
-    cached: false,
-    modules: false,
-    chunkModules: false
   } //,
   // devServer: {
     // contentBase: path.join(__dirname, 'static')

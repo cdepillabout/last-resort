@@ -5,7 +5,7 @@
   "main": "support/index.js",
   "scripts": {
     "build": "npm run clean && webpack --progress --profile --colors",
-    "clean": "rimraf static/js/dist && rimraf dist",
+    "clean": "rimraf static/js/dist/ && rimraf output/",
     "postinstall": "bower cache clean && bower install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
