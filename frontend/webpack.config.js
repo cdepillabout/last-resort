@@ -18,19 +18,19 @@ if (isProd) {
     })
   )
 } else {
-  entries.unshift('webpack-hot-middleware/client?reload=true');
+  // entries.unshift('webpack-hot-middleware/client?reload=true');
   plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.HotModuleReplacementPlugin()
+    // new webpack.NoEmitOnErrorsPlugin()
   )
 }
 
 const config = {
   entry: entries,
   output: {
-    path: path.join(__dirname, 'static', 'js'),
-    filename: 'bundle.js',
-    publicPath: '/js/'
+    path: path.join(__dirname, 'static', 'js', 'dist'),
+    filename: 'bundle.js'
+    // publicPath: '/js/'
   },
   module: {
     loaders: [
@@ -64,25 +64,25 @@ const config = {
     ],
     extensions: ['.js', '.purs']
   },
-  performance: { hints: false },
+  performance: { hints: "warning" },
   stats: {
     hash: false,
     timings: false,
     version: false,
     assets: false,
-    errors: true,
+    errors: false,
     colors: false,
     chunks: false,
     children: false,
     cached: false,
     modules: false,
     chunkModules: false
-  },
-  devServer: {
-    contentBase: path.join(__dirname, 'static'),
-    hot: true,
-    watchContentBase: true
-  }
+  } //,
+  // devServer: {
+    // contentBase: path.join(__dirname, 'static')
+    // hot: true,
+    // watchContentBase: true
+  // }
 }
 
 module.exports = config
