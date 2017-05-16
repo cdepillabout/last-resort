@@ -23,6 +23,6 @@ match :: String -> Route
 match url = fromMaybe (NotFound url) $ router url $
   Home <$ end
 
-toURL :: Route -> String
-toURL (NotFound url) = url
-toURL (Home) = "/"
+toUrl :: Route -> String
+toUrl (NotFound url) = url
+toUrl (Home) = "/"

@@ -17,7 +17,7 @@ import Pux.Renderer.React (renderToDOM)
 import Signal ((~>))
 
 import App.Events (AppEffects, Event(..), foldp)
-import App.Routes (match)
+import App.Routes (Route(Home), match, toUrl)
 import App.State (State, init)
 import App.View.Layout (view)
 
@@ -51,7 +51,7 @@ main url state = do
 -- | Used to serialize State from JSON in support/client.entry.js
 readState :: Foreign -> State
 readState json =
-  either (\_ -> init "/") id $
+  either (const $ init $ toUrl Home) id $
     runExcept
       (genericDecode
         (defaultOptions { unwrapSingleConstructors = true })
