@@ -31,3 +31,11 @@ toUrl :: Route -> String
 toUrl (Home) = "/"
 toUrl (NotFound url) = url
 toUrl (SearchResults) = "/search"
+
+titleForRoute :: Route -> String
+titleForRoute Home = "Last Resort"
+titleForRoute (NotFound _) = prependLastResort "404 Not Found"
+titleForRoute SearchResults = prependLastResort "Search Results"
+
+prependLastResort :: String -> String
+prependLastResort = append "Last Resort | "
