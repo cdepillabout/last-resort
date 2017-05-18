@@ -14,19 +14,20 @@ import Text.Smolder.HTML.Attributes (className)
 import Text.Smolder.Markup ((!))
 
 import App.Events (Event)
-import App.Routes (Route(NotFound, Home))
+import App.Routes (Route(..))
 import App.State (State(..))
 import App.View.Homepage as Homepage
 import App.View.NotFound as NotFound
+import App.View.SearchResults as SearchResults
 
 view :: State -> HTML Event
 view (State st) =
   div ! className "app" $ do
     style css
-
     case st.route of
-      (Home) -> Homepage.view (State st)
+      Home -> Homepage.view (State st)
       (NotFound url) -> NotFound.view (State st)
+      SearchResults -> SearchResults.view (State st)
 
 css :: CSS
 css = do
@@ -36,7 +37,17 @@ css = do
 
   fromString "body" ? do
     backgroundColor (rgb 0 20 30)
-    key (fromString "font-family") (value "-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif")
+    let fontFamily =
+          "-apple-system," <>
+          "BlinkMacSystemFont," <>
+          "\"Segoe UI\"," <>
+          "Roboto," <>
+          "Oxygen-Sans," <>
+          "Ubuntu," <>
+          "Cantarell," <>
+          "\"Helvetica Neue\"," <>
+          "sans-serif"
+    key (fromString "font-family") (value fontFamily)
     color white
     textAlign center
 

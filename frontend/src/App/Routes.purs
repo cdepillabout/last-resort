@@ -1,16 +1,19 @@
 module App.Routes where
 
-import Data.Function (($))
-import Data.Functor ((<$))
+import Prelude
+
+import Control.Alt ((<|>))
 import Data.Foreign.Class (class Decode, class Encode)
 import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (fromMaybe)
-import Data.Show (class Show)
-import Pux.Router (end, router)
+import Pux.Router (end, lit, router)
 
-data Route = Home | NotFound String
+data Route
+  = Home
+  | NotFound String
+  | SearchResults
 
 derive instance genericRoute :: Generic Route _
 instance showRoute :: Show Route where show = genericShow
@@ -21,8 +24,10 @@ instance encodeRoute :: Encode Route where
 
 match :: String -> Route
 match url = fromMaybe (NotFound url) $ router url $
-  Home <$ end
+  Home <$ end <|>
+  SearchResults <$ lit "search" <* end
 
 toUrl :: Route -> String
-toUrl (NotFound url) = url
 toUrl (Home) = "/"
+toUrl (NotFound url) = url
+toUrl (SearchResults) = "/search"

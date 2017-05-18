@@ -1,4 +1,4 @@
-module App.View.Homepage where
+module App.View.SearchResults where
 
 import App.Events (Event)
 import App.State (State)
@@ -12,7 +12,6 @@ import Text.Smolder.Markup ((!), text)
 view :: State -> HTML Event
 view s =
   div do
-    h1 $ text "Pux"
-    h1 $ text "nothing"
+    h1 $ text "Search Results"
     a ! className "guide" ! href "https://www.purescript-pux.org/" $ text "Guide"
     a ! className "github" ! href "https://github.com/alexmingoia/purescript-pux/" $ text "GitHub"
