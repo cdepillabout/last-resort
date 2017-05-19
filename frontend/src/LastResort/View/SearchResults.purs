@@ -1,6 +1,6 @@
 module LastResort.View.SearchResults where
 
-import Prelude hiding (div)
+import LastResort.Prelude hiding (div)
 
 import Pux.DOM.HTML (HTML)
 import Text.Smolder.HTML (a, div, h1)

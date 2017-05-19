@@ -1,6 +1,6 @@
 module LastResort where
 
-import Prelude
+import LastResort.Prelude
 
 import Control.Monad.Eff (Eff)
 import Control.Monad.Except (runExcept)

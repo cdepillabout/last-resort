@@ -1,6 +1,6 @@
 module LastResort.Routes where
 
-import Prelude
+import LastResort.Prelude
 
 import Control.Alt ((<|>))
 import Data.Foreign.Class (class Decode, class Encode)
