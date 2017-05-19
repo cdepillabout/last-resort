@@ -2,6 +2,7 @@ module LastResort.Events where
 
 import LastResort.Prelude
 
+import Control.Monad.Aff (Aff)
 import Control.Monad.Eff.Class (liftEff)
 import Data.Foreign (toForeign)
 import Data.Maybe (Maybe(..))
@@ -36,14 +37,24 @@ foldp (SearchStringChange domEvent) state =
 foldPageView
   :: forall fx.
      Route -> State -> EffModel State Event (AppEffects fx)
-foldPageView route (State state) =
-  noEffects $
+foldPageView route state =
+  { effects: effectsForPageView route state
+  , state: updateRouteForPageView route state
+  }
+
+updateRouteForPageView :: Route -> State -> State
+updateRouteForPageView route (State state) =
     State
       state
         { route = route
         , loaded = true
         , title = titleForRoute route
         }
+
+effectsForPageView
+  :: forall fx.
+     Route -> State -> Array (Aff (AppEffects fx) (Maybe Event))
+effectsForPageView route state = undefined
 
 foldNavigate
   :: forall fx.
