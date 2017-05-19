@@ -1,18 +1,18 @@
 module LastResort.View.Homepage where
 
-import Prelude hiding (div)
+import LastResort.Prelude hiding (div)
 
-import Pux.DOM.Events (onClick)
+import Pux.DOM.Events (onChange, onClick, onSubmit)
 import Pux.DOM.HTML (HTML)
-import Text.Smolder.HTML (a, div, h1, nav, li, ul)
-import Text.Smolder.HTML.Attributes (href, className)
+import Text.Smolder.HTML (a, div, form, h1, input, nav, li, ul)
+import Text.Smolder.HTML.Attributes (href, name, type', value)
 import Text.Smolder.Markup ((!), (#!), text)
 
 import LastResort.Events (Event(..))
-import LastResort.State (State)
+import LastResort.State (State(..))
 
 view :: State -> HTML Event
-view state =
+view (State state) =
   div do
     h1 $ text "Pux"
     -- h1 $ text "nothing"

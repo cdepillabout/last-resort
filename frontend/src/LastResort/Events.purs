@@ -1,6 +1,6 @@
 module LastResort.Events where
 
-import Prelude
+import LastResort.Prelude
 
 import Control.Monad.Eff.Class (liftEff)
 import Data.Foreign (toForeign)
@@ -21,16 +21,16 @@ import LastResort.State (State(..))
 data Event
   = Navigate String DOMEvent
   | PageView Route
-  | Search DOMEvent
-  | SearchStringChange
+  | Search
+  | SearchStringChange DOMEvent
 
 type AppEffects fx = (ajax :: AJAX, dom :: DOM, history :: HISTORY | fx)
 
 foldp :: forall fx. Event -> State -> EffModel State Event (AppEffects fx)
 foldp (PageView route) state = foldPageView route state
 foldp (Navigate url event) state = foldNavigate url event state
-foldp (Search domEvent) state = _
-foldp (SearchStringChange domEvent) state = _
+foldp Search state = undefined
+foldp (SearchStringChange domEvent) state = undefined
 
 foldPageView
   :: forall fx.
