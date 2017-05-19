@@ -1,4 +1,4 @@
-module App.Routes where
+module LastResort.Routes where
 
 import Prelude
 

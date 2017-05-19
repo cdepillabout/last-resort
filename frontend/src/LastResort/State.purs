@@ -1,11 +1,12 @@
-module App.State where
+module LastResort.State where
 
-import App.Config (config)
-import App.Routes (Route, match)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Newtype (class Newtype)
 import Data.Show (class Show)
+
+import LastResort.Config (config)
+import LastResort.Routes (Route, match)
 
 newtype State = State
   { loaded :: Boolean

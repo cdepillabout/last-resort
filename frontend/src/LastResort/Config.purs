@@ -1,4 +1,4 @@
-module App.Config where
+module LastResort.Config where
 
 type Config =
   { title :: String

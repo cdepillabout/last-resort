@@ -1,14 +1,15 @@
-module App.View.Homepage where
+module LastResort.View.Homepage where
 
-import App.Events (Event(..))
-import App.State (State)
-import Control.Bind (discard)
-import Data.Function (($))
+import Prelude hiding (div)
+
 import Pux.DOM.Events (onClick)
 import Pux.DOM.HTML (HTML)
 import Text.Smolder.HTML (a, div, h1, nav, li, ul)
 import Text.Smolder.HTML.Attributes (href, className)
 import Text.Smolder.Markup ((!), (#!), text)
+
+import LastResort.Events (Event(..))
+import LastResort.State (State)
 
 view :: State -> HTML Event
 view state =

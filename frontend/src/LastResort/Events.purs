@@ -1,9 +1,7 @@
-module App.Events where
+module LastResort.Events where
 
 import Prelude
 
-import App.Routes (Route, match, titleForRoute)
-import App.State (State(..))
 import Control.Monad.Eff.Class (liftEff)
 import Data.Foreign (toForeign)
 import Data.Maybe (Maybe(..))
@@ -16,6 +14,9 @@ import DOM.HTML.Window (history)
 import Network.HTTP.Affjax (AJAX)
 import Pux (EffModel, noEffects, onlyEffects)
 import Pux.DOM.Events (DOMEvent)
+
+import LastResort.Routes (Route, match, titleForRoute)
+import LastResort.State (State(..))
 
 data Event
   = Navigate String DOMEvent

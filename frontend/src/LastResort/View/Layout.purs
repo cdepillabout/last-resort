@@ -1,4 +1,4 @@
-module App.View.Layout where
+module LastResort.View.Layout where
 
 import Prelude hiding (div)
 
@@ -13,12 +13,12 @@ import Text.Smolder.HTML (div)
 import Text.Smolder.HTML.Attributes (className)
 import Text.Smolder.Markup ((!))
 
-import App.Events (Event)
-import App.Routes (Route(..))
-import App.State (State(..))
-import App.View.Homepage as Homepage
-import App.View.NotFound as NotFound
-import App.View.SearchResults as SearchResults
+import LastResort.Events (Event)
+import LastResort.Routes (Route(..))
+import LastResort.State (State(..))
+import LastResort.View.Homepage as Homepage
+import LastResort.View.NotFound as NotFound
+import LastResort.View.SearchResults as SearchResults
 
 view :: State -> HTML Event
 view (State st) =

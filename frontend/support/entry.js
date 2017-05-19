@@ -1,12 +1,12 @@
-const ClientEntry = require('../output/Client');
+const LastResort = require('../output/LastResort');
 
-const initialState = ClientEntry.readState(window.__puxInitialState);
+const initialState = LastResort.readState(window.__puxInitialState);
 
 // If hot-reloading, hook into each state change and re-render using the last
 // state.
 if (module.hot) {
   let initState = window.__puxLastState || initialState
-  let app = ClientEntry.main(window.location.pathname)(initState)()
+  let app = LastResort.main(window.location.pathname)(initState)()
 
   // Hook for pux devtools
   window.__puxApp = app;
@@ -17,5 +17,5 @@ if (module.hot) {
 
   module.hot.accept();
 } else {
-  ClientEntry.main(window.location.pathname)(initialState)()
+  LastResort.main(window.location.pathname)(initialState)()
 }

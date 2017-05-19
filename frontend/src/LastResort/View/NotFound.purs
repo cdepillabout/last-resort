@@ -1,6 +1,7 @@
-module App.View.NotFound where
+module LastResort.View.NotFound where
 
-import Data.Function (($))
+import Prelude hiding (div)
+
 import Pux.DOM.HTML (HTML)
 import Text.Smolder.HTML (div, h2)
 import Text.Smolder.Markup (text)

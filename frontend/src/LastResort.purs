@@ -1,4 +1,4 @@
-module Client where
+module LastResort where
 
 import Prelude
 
@@ -16,10 +16,10 @@ import Pux.DOM.History (sampleURL)
 import Pux.Renderer.React (renderToDOM)
 import Signal ((~>))
 
-import App.Events (AppEffects, Event(..), foldp)
-import App.Routes (Route(Home), match, toUrl)
-import App.State (State, init)
-import App.View.Layout (view)
+import LastResort.Events (AppEffects, Event(..), foldp)
+import LastResort.Routes (Route(Home), match, toUrl)
+import LastResort.State (State, init)
+import LastResort.View.Layout (view)
 
 
 type WebApp = App (DOMEvent -> Event) Event State
