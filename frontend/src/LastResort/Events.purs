@@ -16,7 +16,7 @@ import Network.HTTP.Affjax (AJAX)
 import Pux (EffModel, noEffects, onlyEffects)
 import Pux.DOM.Events (DOMEvent, targetValue)
 
-import LastResort.Routes (Route(..), match, titleForRoute)
+import LastResort.Routes (Route(..), SearchParams(..), match, titleForRoute)
 import LastResort.State (Input(Input), State(..))
 
 data Event
@@ -43,19 +43,25 @@ foldPageView route state =
   }
 
 updateRouteForPageView :: Route -> State -> State
-updateRouteForPageView (SearchResults searchQuery) (State state) = undefined
 updateRouteForPageView route (State state) =
     State
       state
-        { route = route
-        , loaded = true
+        { loaded = true
+        , route = route
+        , searchString =
+            case route of
+              (SearchResults (SearchParams searchParams)) ->
+                Input searchParams.query
+              _ -> state.searchString
         , title = titleForRoute route
         }
 
 effectsForPageView
   :: forall fx.
      Route -> State -> Array (Aff (AppEffects fx) (Maybe Event))
-effectsForPageView (SearchResults searchQuery) state = []
+effectsForPageView (SearchResults (SearchParams searchParams)) state =
+  [
+  ]
 effectsForPageView route state = []
 
 foldNavigate
