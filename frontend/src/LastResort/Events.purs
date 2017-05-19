@@ -13,7 +13,7 @@ import DOM.HTML.Types (HISTORY)
 import DOM.HTML.Window (history)
 import Network.HTTP.Affjax (AJAX)
 import Pux (EffModel, noEffects, onlyEffects)
-import Pux.DOM.Events (DOMEvent)
+import Pux.DOM.Events (DOMEvent, targetValue)
 
 import LastResort.Routes (Route, match, titleForRoute)
 import LastResort.State (State(..))
@@ -30,7 +30,8 @@ foldp :: forall fx. Event -> State -> EffModel State Event (AppEffects fx)
 foldp (PageView route) state = foldPageView route state
 foldp (Navigate url event) state = foldNavigate url event state
 foldp Search state = undefined
-foldp (SearchStringChange domEvent) state = undefined
+foldp (SearchStringChange domEvent) state =
+  foldSearchStringChanged domEvent state
 
 foldPageView
   :: forall fx.
@@ -60,3 +61,9 @@ foldNavigate url event state =
           hist
         pure $ Just $ PageView (match url)
     ]
+
+foldSearchStringChanged
+  :: forall fx ev.
+     DOMEvent -> State -> EffModel State ev fx
+foldSearchStringChanged domEvent (State state) =
+  noEffects $ State state { searchString = targetValue domEvent }
