@@ -94,7 +94,7 @@ foldSearch domEvent state =
   onlyEffects
     state
     [ do
-        liftEff $preventDefault domEvent
+        liftEff $ preventDefault domEvent
         pure $ Just $ Navigate (toUrl (SearchResults (stateToSearchParams state))) domEvent
     ]
 
