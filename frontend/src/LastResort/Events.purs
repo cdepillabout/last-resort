@@ -16,21 +16,21 @@ import Network.HTTP.Affjax (AJAX)
 import Pux (EffModel, noEffects, onlyEffects)
 import Pux.DOM.Events (DOMEvent, targetValue)
 
-import LastResort.Routes (Route(..), SearchParams(..), match, titleForRoute)
-import LastResort.State (Input(Input), State(..))
+import LastResort.Routes (Route(..), SearchParams(..), match, titleForRoute, toUrl)
+import LastResort.State (Input(Input), State(..), stateToSearchParams)
 
 data Event
   = Navigate String DOMEvent
   | PageView Route
-  | Search
+  | Search DOMEvent
   | SearchStringChange DOMEvent
 
 type AppEffects fx = (ajax :: AJAX, dom :: DOM, history :: HISTORY | fx)
 
 foldp :: forall fx. Event -> State -> EffModel State Event (AppEffects fx)
 foldp (PageView route) state = foldPageView route state
-foldp (Navigate url event) state = foldNavigate url event state
-foldp Search state = undefined
+foldp (Navigate url domEvent) state = foldNavigate url domEvent state
+foldp (Search domEvent) state = foldSearch domEvent state
 foldp (SearchStringChange domEvent) state =
   foldSearchStringChanged domEvent state
 
@@ -67,11 +67,11 @@ effectsForPageView route state = []
 foldNavigate
   :: forall fx.
      String -> DOMEvent -> State -> EffModel State Event (AppEffects fx)
-foldNavigate url event state =
+foldNavigate url domEvent state =
   onlyEffects
     state
     [ liftEff do
-        preventDefault event
+        preventDefault domEvent
         hist <- history =<< window
         pushState
           (toForeign {})
@@ -86,3 +86,15 @@ foldSearchStringChanged
      DOMEvent -> State -> EffModel State ev fx
 foldSearchStringChanged domEvent (State state) =
   noEffects $ State state { searchString = Input $ targetValue domEvent }
+
+foldSearch
+  :: forall fx.
+     DOMEvent -> State -> EffModel State Event (AppEffects fx)
+foldSearch domEvent state =
+  onlyEffects
+    state
+    [ do
+        liftEff $preventDefault domEvent
+        pure $ Just $ Navigate (toUrl (SearchResults (stateToSearchParams state))) domEvent
+    ]
+

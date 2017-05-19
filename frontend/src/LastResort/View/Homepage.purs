@@ -18,7 +18,7 @@ view (State state) =
     -- h1 $ text "nothing"
     -- a ! className "guide" ! href "https://www.purescript-pux.org/" $ text "Guide"
     -- a ! className "github" ! href "https://github.com/alexmingoia/purescript-pux/" $ text "GitHub"
-    form ! name "search" #! onSubmit (const Search) $ do
+    form ! name "search" #! onSubmit Search $ do
       let searchString =
             case state.searchString of
               PreInput -> ""

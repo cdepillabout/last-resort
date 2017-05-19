@@ -9,7 +9,7 @@ import Data.Generic.Rep.Show (genericShow)
 import Data.Newtype (class Newtype)
 
 import LastResort.Config (config)
-import LastResort.Routes (Route, match)
+import LastResort.Routes (Route, SearchParams(..), match)
 
 data Input a
   = PreInput
@@ -21,6 +21,15 @@ instance decodeInput :: Decode a => Decode (Input a) where
   decode = genericDecode $ defaultOptions { unwrapSingleConstructors = true }
 instance encodeInput :: Encode a => Encode (Input a) where
   encode = genericEncode $ defaultOptions { unwrapSingleConstructors = true }
+
+-- | Case analysis for `Input`.
+foldInput :: forall b a. b -> (a -> b) -> Input a -> b
+foldInput b _ PreInput = b
+foldInput _ f (Input a) = f a
+
+-- | Like `fromMaybe` but for `Input`.
+fromInput :: forall a. a -> Input a -> a
+fromInput a = foldInput a id
 
 newtype State = State
   { loaded :: Boolean
@@ -41,3 +50,8 @@ init url = State
   , searchString: PreInput
   , title: config.title
   }
+
+stateToSearchParams :: State -> SearchParams
+stateToSearchParams (State state) =
+  SearchParams
+    { query: fromInput "" state.searchString }
