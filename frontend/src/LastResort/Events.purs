@@ -60,6 +60,7 @@ effectsForPageView
   :: forall fx.
      Route -> State -> Array (Aff (AppEffects fx) (Maybe Event))
 effectsForPageView (SearchResults (SearchParams searchParams)) state =
+  -- TODO: Actually do ajax query here.
   [
   ]
 effectsForPageView route state = []
