@@ -20,11 +20,21 @@ import Pux.DOM.Events (DOMEvent)
 data Event
   = Navigate String DOMEvent
   | PageView Route
+  | Search DOMEvent
+  | SearchStringChange
 
 type AppEffects fx = (ajax :: AJAX, dom :: DOM, history :: HISTORY | fx)
 
-foldp :: ∀ fx. Event -> State -> EffModel State Event (AppEffects fx)
-foldp (PageView route) (State state) =
+foldp :: forall fx. Event -> State -> EffModel State Event (AppEffects fx)
+foldp (PageView route) state = foldPageView route state
+foldp (Navigate url event) state = foldNavigate url event state
+foldp (Search domEvent) state = _
+foldp (SearchStringChange domEvent) state = _
+
+foldPageView
+  :: forall fx.
+     Route -> State -> EffModel State Event (AppEffects fx)
+foldPageView route (State state) =
   noEffects $
     State
       state
@@ -32,7 +42,11 @@ foldp (PageView route) (State state) =
         , loaded = true
         , title = titleForRoute route
         }
-foldp (Navigate url event) state =
+
+foldNavigate
+  :: forall fx.
+     String -> DOMEvent -> State -> EffModel State Event (AppEffects fx)
+foldNavigate url event state =
   onlyEffects
     state
     [ liftEff do

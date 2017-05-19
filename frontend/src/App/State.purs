@@ -8,9 +8,10 @@ import Data.Newtype (class Newtype)
 import Data.Show (class Show)
 
 newtype State = State
-  { title :: String
+  { loaded :: Boolean
   , route :: Route
-  , loaded :: Boolean
+  , searchString :: String
+  , title :: String
   }
 
 derive instance genericState :: Generic State _
@@ -20,7 +21,8 @@ instance showState :: Show State where show = genericShow
 
 init :: String -> State
 init url = State
-  { title: config.title
+  { loaded: false
   , route: match url
-  , loaded: false
+  , searchString: ""
+  , title: config.title
   }

@@ -11,12 +11,14 @@ import Text.Smolder.HTML.Attributes (href, className)
 import Text.Smolder.Markup ((!), (#!), text)
 
 view :: State -> HTML Event
-view s =
+view state =
   div do
     h1 $ text "Pux"
-    h1 $ text "nothing"
-    a ! className "guide" ! href "https://www.purescript-pux.org/" $ text "Guide"
-    a ! className "github" ! href "https://github.com/alexmingoia/purescript-pux/" $ text "GitHub"
+    -- h1 $ text "nothing"
+    -- a ! className "guide" ! href "https://www.purescript-pux.org/" $ text "Guide"
+    -- a ! className "github" ! href "https://github.com/alexmingoia/purescript-pux/" $ text "GitHub"
+    form ! name "search" #! onSubmit (const Search) $ do
+      input ! type' "text" ! value state.searchString #! onChange SearchStringChange
 
 
 -- TODO: This shows an example of using onClick to send application Navigation events.
