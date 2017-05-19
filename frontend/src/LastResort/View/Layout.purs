@@ -27,7 +27,7 @@ view (State st) =
     case st.route of
       Home -> Homepage.view (State st)
       (NotFound url) -> NotFound.view (State st)
-      SearchResults -> SearchResults.view (State st)
+      (SearchResults _) -> SearchResults.view (State st)
 
 css :: CSS
 css = do

@@ -9,7 +9,7 @@ import Text.Smolder.HTML.Attributes (href, name, type', value)
 import Text.Smolder.Markup ((!), (#!), text)
 
 import LastResort.Events (Event(..))
-import LastResort.State (State(..))
+import LastResort.State (Input(..), State(..))
 
 view :: State -> HTML Event
 view (State state) =
@@ -19,7 +19,11 @@ view (State state) =
     -- a ! className "guide" ! href "https://www.purescript-pux.org/" $ text "Guide"
     -- a ! className "github" ! href "https://github.com/alexmingoia/purescript-pux/" $ text "GitHub"
     form ! name "search" #! onSubmit (const Search) $ do
-      input ! type' "text" ! value state.searchString #! onChange SearchStringChange
+      let searchString =
+            case state.searchString of
+              PreInput -> ""
+              Input str -> str
+      input ! type' "text" ! value searchString #! onChange SearchStringChange
 
 
 -- TODO: This shows an example of using onClick to send application Navigation events.
