@@ -98,4 +98,3 @@ foldSearch domEvent state =
         liftEff $ preventDefault domEvent
         pure $ Just $ Navigate (toUrl (SearchResults (stateToSearchParams state))) domEvent
     ]
-
